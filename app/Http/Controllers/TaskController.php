@@ -8,9 +8,7 @@ use Illuminate\Validation\Rule;
 
 class TaskController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+   //ok
     public function index()
     {
         $tasks = Task::all();
@@ -20,17 +18,15 @@ class TaskController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    //ok
     public function store(Request $request)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'status' =>['nullabe', Rule::in(Task::STATUS)]]);
+            'status' =>[ Rule::in(Task::STATUS)]]);
 
-            if (empty($validated['status'])) {
-        $validated['status'] ?? Task::STATUS_PENDENTE;
+            if (!isset($validated['status'])) {
+        $validated['status'] = Task::STATUS_PENDENTE;
     }
           $task = Task::create($validated);
           
@@ -40,27 +36,60 @@ class TaskController extends Controller
 
     }
 
-    /**
-     * Display the specified resource.
-     */
+    
     public function show(string $id)
     {
-        //
+        $task = Task::find($id);
+
+        if (!$task) {
+            return response()->json(['mensagem' => 'Tarefa não encontrada'], 404);
+        }
+
+        return response()->json([
+            'mensagem' => 'Task',
+            'dados' => $task
+        ], 200);
+    
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    
     public function update(Request $request, string $id)
     {
-        //
+        
+        $task = Task::find($id);
+
+        if (!$task) {
+            return response()->json(['mensagem' => 'Tarefa não encontrada'], 404);
+        }
+
+        $validated = $request->validate([
+            'title' => 'sometimes|required|string|max:255',
+            'status' => ['sometimes', Rule::in(Task::STATUS)]
+        ]);
+
+        $task->update($validated);
+
+        return response()->json([
+            'mensagem' => 'Tarefa atualizada com sucesso',
+            'dados' => $task
+        ], 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+
     public function destroy(string $id)
     {
-        //
+        
+        $task = Task::find($id);
+
+        if (!$task) {
+            return response()->json(['mensagem' => 'Tarefa não encontrada'], 404);
+        }
+
+        $task->delete();
+
+        return response()->json([
+            'mensagem' => 'Tarefa removida com sucesso'
+        ], 204);
     }
+    
 }
