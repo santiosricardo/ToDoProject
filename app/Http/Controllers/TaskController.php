@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class TaskController extends Controller
 {
@@ -24,7 +25,19 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'status' =>['nullabe', Rule::in(Task::STATUS)]]);
+
+            if (empty($validated['status'])) {
+        $validated['status'] ?? Task::STATUS_PENDENTE;
+    }
+          $task = Task::create($validated);
+          
+          return response()->json([
+        'mensagem' => 'Tarefa criada com sucesso',
+          ], 201);
+
     }
 
     /**
