@@ -36,60 +36,60 @@ class TaskController extends Controller
 
     }
 
-    
+    //ok
     public function show(string $id)
     {
         $task = Task::find($id);
 
         if (!$task) {
-            return response()->json(['mensagem' => 'Tarefa não encontrada'], 404);
+            return response()->json(['mensagem' => 'Task não encontrada'], 404);
         }
 
         return response()->json([
-            'mensagem' => 'Task',
-            'dados' => $task
+            'mensagem' => 'Task Localizada',
+            'Task' => $task
         ], 200);
     
     }
 
-    
+    //ok
     public function update(Request $request, string $id)
     {
         
         $task = Task::find($id);
 
         if (!$task) {
-            return response()->json(['mensagem' => 'Tarefa não encontrada'], 404);
+            return response()->json(['mensagem' => 'Task não encontrada'], 404);
         }
 
         $validated = $request->validate([
-            'title' => 'sometimes|required|string|max:255',
-            'status' => ['sometimes', Rule::in(Task::STATUS)]
+            'title' => 'string|max:255',
+            'status' => [Rule::in(Task::STATUS)]
         ]);
 
         $task->update($validated);
 
         return response()->json([
-            'mensagem' => 'Tarefa atualizada com sucesso',
+            'mensagem' => 'Task atualizada com sucesso',
             'dados' => $task
         ], 200);
     }
 
-
+//ok
     public function destroy(string $id)
     {
         
         $task = Task::find($id);
 
         if (!$task) {
-            return response()->json(['mensagem' => 'Tarefa não encontrada'], 404);
+            return response()->json(['mensagem' => 'Task não encontrada'], 404);
         }
 
         $task->delete();
 
         return response()->json([
-            'mensagem' => 'Tarefa removida com sucesso'
-        ], 204);
+            'mensagem' => 'Task deletada com sucesso'
+        ], 200);
     }
     
 }
